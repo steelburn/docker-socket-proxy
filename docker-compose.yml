@@ -7,4 +7,6 @@ services:
       - "3277:3277"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - API_KEY=your-secure-api-key
     restart: unless-stopped
