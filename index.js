@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const httpProxy = require('http-proxy');
 const app = express();
@@ -7,10 +9,21 @@ const proxy = httpProxy.createProxyServer({
   }
 });
 
+const API_KEY = process.env.API_KEY;
+
 // Log incoming requests
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
+});
+
+// Middleware to check API key
+app.use((req, res, next) => {
+  const apiKey = req.headers['x-api-key'];
+  if (!API_KEY || apiKey === API_KEY) {
+    return next();
+  }
+  res.status(403).send('Forbidden: Invalid API Key');
 });
 
 // Proxy requests to the Docker socket
