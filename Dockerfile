@@ -1,14 +1,14 @@
-# Use the official Node.js 18 image as the base image
-FROM node:18
+# Use an Alpine-based Node.js image for a smaller footprint
+FROM node:18-alpine
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
+# Copy only package.json and package-lock.json first to leverage Docker caching
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --production
 
 # Copy the application code
 COPY . .
