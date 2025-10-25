@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  proxy:
+    build: .
+    ports:
+      - "3277:3277"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: unless-stopped
