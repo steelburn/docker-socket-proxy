@@ -42,6 +42,8 @@ This repository contains three implementations of a Docker socket proxy, built u
 
 The proxy will be available at `http://localhost:3277` and forwards requests to the Docker socket.
 
+**Note**: The container runs as root (`user: '0'`) to access the Docker socket. This is required for Unix socket communication.
+
 ### Using Pre-built Images
 
 ```bash
@@ -50,10 +52,13 @@ docker run -d \
   -p 3277:3277 \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
   -e API_KEY=your-secret \
+  --user 0 \
   ghcr.io/steelburn/docker-socket-proxy:go-latest
 ```
 
 Available tags: `go-latest`, `rust-latest`, `nodejs-latest`
+
+**Security Note**: The `--user 0` flag runs the container as root, which is necessary for Docker socket access. Consider the security implications for your deployment environment.
 
 ### Local Development
 

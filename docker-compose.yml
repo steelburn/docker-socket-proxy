@@ -12,6 +12,8 @@ services:
     environment:
       - PORT=${PORT:-3277}
       - API_KEY=${API_KEY}
+    # Run as root to access Docker socket
+    user: '0'
     restart: unless-stopped
     # Optional: Add healthcheck
     healthcheck:

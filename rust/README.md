@@ -29,8 +29,11 @@ docker-compose up -d
 docker run --rm -p 3277:3277 \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
   -e API_KEY=secret \
+  --user 0 \
   ghcr.io/steelburn/docker-socket-proxy:rust-latest
 ```
+
+**Note**: The `--user 0` flag runs the container as root, which is required for Docker socket access.
 
 ### Local Development
 
