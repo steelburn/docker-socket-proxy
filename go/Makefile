@@ -10,7 +10,7 @@ all: build
 
 # Local static build (produces ./docker-socket-proxy)
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o docker-socket-proxy main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o docker-socket-proxy ./cmd/docker-socket-proxy
 
 docker-build:
 	docker build -t $(IMAGE):$(TAG) .

@@ -1,0 +1,28 @@
+name: Lint Code
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  lint-go:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: golangci/golangci-lint-action@v3
+      with:
+        working-directory: go
+  lint-rust:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@stable
+    - run: cargo clippy --manifest-path rust/Cargo.toml -- -D warnings
+  lint-nodejs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    - run: cd nodejs && npm install && npx eslint src/

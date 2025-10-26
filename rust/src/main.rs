@@ -10,7 +10,14 @@ async fn proxy(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     let method = req.method().as_str();
     let uri = req.uri();
 
-    info!("Received {} request for {}", method, uri);
+    // Determine client IP (prefer X-Forwarded-For if present)
+    let client_ip = req.headers().get("x-forwarded-for")
+        .and_then(|h| h.to_str().ok())
+        .and_then(|s| s.split(',').next())
+        .map(|s| s.trim().to_string())
+        .unwrap_or_else(|| req.peer_addr().map(|a| a.ip().to_string()).unwrap_or_else(|| "unknown".to_string()));
+
+    info!("INFO: Proxying request: {} {} from {}", method, uri, client_ip);
 
     // Connect to Docker Unix socket
     let mut stream = match UnixStream::connect(socket_path).await {
@@ -39,7 +46,7 @@ async fn proxy(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     }
 
     // Add API key if configured
-    if let Some(api_key) = env::var("API_KEY").ok() {
+    if let Ok(api_key) = env::var("API_KEY") {
         http_request.push_str(&format!("x-api-key: {}\r\n", api_key));
         info!("Added API key authentication header");
     }

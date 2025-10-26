@@ -1,8 +1,8 @@
 # Build stage
 FROM rust:1.90.0-alpine3.22 AS builder
 
-# Install build dependencies
-RUN apk add --no-cache musl-dev
+# Install build dependencies (gcc, musl, pkgconfig, openssl dev for crates using native libs)
+RUN apk add --no-cache musl-dev build-base pkgconf openssl-dev ca-certificates
 
 # Install Rust targets for multi-platform builds
 RUN rustup target add x86_64-unknown-linux-musl
@@ -48,12 +48,11 @@ FROM alpine:latest AS binary-selector
 
 ARG TARGETPLATFORM
 COPY --from=builder /usr/src/app/target/x86_64-unknown-linux-musl/release/docker_socket_proxy /amd64/
-COPY --from=builder /usr/src/app/target/aarch64-unknown-linux-musl/release/docker_socket_proxy /arm64/
 
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
     cp /amd64/docker_socket_proxy /docker_socket_proxy; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-    cp /arm64/docker_socket_proxy /docker_socket_proxy; \
+    echo "Arm64 binary not built for single-platform build"; exit 1; \
     fi
 
 # Runtime stage - using scratch for minimal image

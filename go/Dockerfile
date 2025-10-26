@@ -4,13 +4,15 @@ FROM golang:1.25 AS builder
 WORKDIR /src
 
 # Build a statically-linked binary for Linux AMD64
-ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+# Disable Go modules for this build (module file is not present in this subfolder)
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=off
 
 # Copy everything (this repo is tiny: single-file app)
 COPY . .
 
-# Build the binary (strip debug info for smaller size)
-RUN go build -ldflags "-s -w" -o /docker-socket-proxy main.go
+# The repository places the main package under cmd/docker-socket-proxy/main.go
+# Build from that package path so the Docker build succeeds when the context is the `go/` folder.
+RUN go build -ldflags "-s -w" -o /docker-socket-proxy ./cmd/docker-socket-proxy
 
 ### Final image: scratch
 FROM scratch

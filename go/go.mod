@@ -1,7 +1,3 @@
-module docker-socket-proxy-go
+module docker-socket-proxy
 
 go 1.18
-
-require (
-    github.com/docker/docker v20.10.7
-)

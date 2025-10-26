@@ -84,7 +84,6 @@ func main() {
 		// Update the URL to only contain the path needed by the Docker daemon
 		req.URL.Scheme = targetURL.Scheme
 		req.URL.Host = targetURL.Host
-		req.URL.Path = req.URL.Path
 	}
 
 	// 4. Start the server.

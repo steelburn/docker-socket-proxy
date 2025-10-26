@@ -13,7 +13,8 @@ const API_KEY = process.env.API_KEY;
 
 // Log incoming requests
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+  const clientIP = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : req.ip;
+  console.log(`INFO: Proxying request: ${req.method} ${req.url} from ${clientIP}`);
   next();
 });
 

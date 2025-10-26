@@ -1,47 +1,124 @@
-# Docker Socket Proxy - NodeJS Version
+# Docker Socket Proxy (Node.js)
 
-This directory contains the NodeJS implementation of the Docker Socket Proxy.
+The Node.js implementation of the Docker Socket Proxy using Express and http-proxy to forward HTTP requests to the Docker Unix socket at `/var/run/docker.sock`, with optional API key authentication.
 
-## Overview
+## 🚀 Features
 
-The NodeJS version of the Docker Socket Proxy allows you to securely manage Docker socket access through a proxy. This implementation is designed to provide a simple and efficient way to interact with Docker APIs while ensuring security and access control.
+- **Express-based**: Lightweight HTTP server with middleware support
+- **http-proxy**: Efficient request forwarding to Docker socket
+- **API Key Authentication**: Optional authentication for security
+- **Client IP Logging**: Logs incoming requests with client IP
+- **Container-Ready**: Optimized for Docker deployment
 
-## Getting Started
+## 📦 Quick Start
 
-To get started with the NodeJS version, follow these steps:
+### Using Docker Compose (Recommended)
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/yourusername/docker-socket-proxy-monorepo.git
-   cd docker-socket-proxy-monorepo/nodejs
-   ```
+From the repository root:
+```bash
+cp .env.sample .env
+# Edit .env as needed
+docker-compose up -d
+```
 
-2. **Install Dependencies**:
-   Make sure you have Node.js installed. Then, run:
-   ```bash
-   npm install
-   ```
+### Using Pre-built Images
 
-3. **Build the Docker Image**:
-   You can build the Docker image using the provided Dockerfile:
-   ```bash
-   docker build -t yourusername/docker-socket-proxy:nodejs-latest .
-   ```
+```bash
+docker run --rm -p 3277:3277 \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  -e API_KEY=secret \
+  ghcr.io/steelburn/docker-socket-proxy:nodejs-latest
+```
 
-4. **Run the Docker Container**:
-   To run the Docker container, use:
-   ```bash
-   docker run -d -p 8080:8080 yourusername/docker-socket-proxy:nodejs-latest
-   ```
+### Local Development
 
-## Usage
+Build using the Makefile:
+```bash
+make build-nodejs
+```
 
-Once the container is running, you can interact with the Docker Socket Proxy through the exposed API. Refer to the API documentation for details on available endpoints and usage.
+Or manually:
+```bash
+npm install
+```
 
-## Contributing
+Run locally:
+```bash
+PORT=3277 node src/index.js
+```
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+Test:
+```bash
+curl http://localhost:3277/version
+```
 
-## License
+## 🔧 Configuration
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `3277` | Port the proxy listens on |
+| `API_KEY` | (none) | Optional API key for authentication |
+
+## 🛠️ Development
+
+### Prerequisites
+
+- Node.js 18+
+- Docker and Docker Compose
+
+### Building
+
+```bash
+make build-nodejs
+# Or: npm install
+```
+
+### Linting
+
+```bash
+make lint-nodejs
+# Or: npx eslint src/
+```
+
+### Docker Build
+
+```bash
+make docker-build-nodejs
+# Or: docker build -t docker-socket-proxy:nodejs-local .
+```
+
+## 🔒 Security
+
+- **Read-Only Socket Mount**: Container cannot modify the Docker socket
+- **Optional Authentication**: API key protection for production use
+
+If you get permission errors accessing the socket:
+- Test with `--user 0` (run as root)
+- For production: `--group-add $(stat -c '%g' /var/run/docker.sock)` to match socket group
+
+## 📊 Logging
+
+Request logging includes client IP:
+```
+INFO: Proxying request: GET /version from 127.0.0.1
+```
+
+## 🚢 CI/CD
+
+CI builds multi-platform images (AMD64 and ARM64):
+- `ghcr.io/steelburn/docker-socket-proxy:nodejs-latest` — latest from `main`
+- `ghcr.io/steelburn/docker-socket-proxy:nodejs-<sha>` — commit-specific
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make changes and run `make lint-nodejs && make build-nodejs`
+4. Test with Docker Compose
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
