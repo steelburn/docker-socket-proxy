@@ -16,7 +16,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
     else \
     GOARCH=amd64; \
     fi && \
-    CGO_ENABLED=0 GOOS=linux GOARCH=$GOARCH GO111MODULE=off go build -ldflags "-s -w" -o /docker-socket-proxy ./cmd/docker-socket-proxy
+    CGO_ENABLED=0 GOOS=linux GOARCH=$GOARCH GO111MODULE=off go build -ldflags "-s -w" -o /docker-socket-proxy ./go/cmd/docker-socket-proxy
 
 ### Final image: scratch
 FROM scratch
