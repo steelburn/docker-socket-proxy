@@ -46,18 +46,9 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
 # Binary selection stage
 FROM alpine:latest AS binary-selector
 
-ARG TARGETPLATFORM
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-    mkdir -p /amd64 && cp /usr/src/app/target/x86_64-unknown-linux-musl/release/docker_socket_proxy /amd64/; \
-    elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-    mkdir -p /arm64 && cp /usr/src/app/target/aarch64-unknown-linux-musl/release/docker_socket_proxy /arm64/; \
-    fi
+COPY --from=builder /usr/src/app/target/*-unknown-linux-musl/release/docker_socket_proxy /binary
 
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-    cp /amd64/docker_socket_proxy /docker_socket_proxy; \
-    elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-    cp /arm64/docker_socket_proxy /docker_socket_proxy; \
-    fi
+RUN cp /binary /docker_socket_proxy
 
 # Runtime stage - using scratch for minimal image
 FROM scratch
