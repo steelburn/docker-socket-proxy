@@ -1,0 +1,27 @@
+{
+  "name": "docker-socket-proxy-nodejs",
+  "version": "1.0.0",
+  "description": "NodeJS version of the Docker socket proxy",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^4.0.0",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/docker-socket-proxy-monorepo.git"
+  },
+  "keywords": [
+    "docker",
+    "socket",
+    "proxy",
+    "nodejs"
+  ],
+  "author": "Khairulnizam Hasan",
+  "license": "MIT"
+}

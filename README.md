@@ -1,51 +1,34 @@
-# Docker Socket Proxy
+# Docker Socket Proxy Monorepo
 
-Docker Socket Proxy is a Node.js application that proxies Docker REST API requests from a TCP port to the Unix socket `/var/run/docker.sock`. It includes API key authentication for added security.
+This repository contains three implementations of a Docker socket proxy, built using NodeJS, Rust, and Go. Each implementation is located in its respective directory and can be built and run independently.
 
-## Features
-- Proxies Docker REST API requests.
-- API key authentication for secure access.
-- Configurable via environment variables.
+## Project Structure
 
-## Prerequisites
-- Docker
-- Node.js (v18 or higher)
+- **go/**: Contains the Go implementation of the Docker socket proxy.
+  - **Dockerfile**: Instructions to build the Docker image for the Go version.
+  - **go.mod**: Module definition and dependencies for the Go application.
+  - **cmd/docker-socket-proxy/main.go**: Entry point for the Go application.
+  - **README.md**: Documentation specific to the Go implementation.
 
-## Setup
+- **rust/**: Contains the Rust implementation of the Docker socket proxy.
+  - **Dockerfile**: Instructions to build the Docker image for the Rust version.
+  - **Cargo.toml**: Package definition and dependencies for the Rust application.
+  - **src/main.rs**: Entry point for the Rust application.
+  - **README.md**: Documentation specific to the Rust implementation.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/steelburn/docker-socket-proxy.git
-   cd docker-socket-proxy
-   ```
+- **nodejs/**: Contains the NodeJS implementation of the Docker socket proxy.
+  - **Dockerfile**: Instructions to build the Docker image for the NodeJS version.
+  - **package.json**: Defines the NodeJS application, including dependencies and scripts.
+  - **src/index.js**: Entry point for the NodeJS application.
+  - **README.md**: Documentation specific to the NodeJS implementation.
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+## CI/CD
 
-3. Create a `.env` file to configure the API key:
-   ```bash
-   cp .env.example .env
-   ```
-   Replace `your-secure-api-key` in the `.env` file with your desired API key.
-
-4. Build and run the application using Docker Compose:
-   ```bash
-   docker-compose up --build
-   ```
-
-## Environment Variables
-- `API_KEY`: The API key required for accessing the proxy. Set this in the `.env` file.
-
-## Usage
-- The application listens on port `3277` by default.
-- Include the API key in the `x-api-key` header of your requests.
-
-Example:
-```bash
-curl -H "x-api-key: your-secure-api-key" http://localhost:3277/containers/json
-```
+The project includes a CI configuration located in `.github/workflows/ci.yml`, which automates the building and pushing of Docker images for all three implementations. The images are tagged as follows:
+- `:go-latest` for the Go version
+- `:rust-latest` for the Rust version
+- `:nodejs-latest` for the NodeJS version
 
 ## License
-This project is licensed under the MIT License.
+
+This project is licensed under the terms of the [LICENSE](LICENSE) file.
