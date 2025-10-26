@@ -3,6 +3,9 @@ FROM golang:1.25 AS builder
 
 WORKDIR /src
 
+# Copy everything (this repo is tiny: single-file app)
+COPY . .
+
 # Build a statically-linked binary for the target platform
 # Disable Go modules for this build (module file is not present in this subfolder)
 ARG TARGETPLATFORM
@@ -14,9 +17,6 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
     GOARCH=amd64; \
     fi && \
     CGO_ENABLED=0 GOOS=linux GOARCH=$GOARCH GO111MODULE=off go build -ldflags "-s -w" -o /docker-socket-proxy ./cmd/docker-socket-proxy
-
-# Copy everything (this repo is tiny: single-file app)
-COPY . .
 
 ### Final image: scratch
 FROM scratch

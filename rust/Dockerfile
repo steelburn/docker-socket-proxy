@@ -12,7 +12,7 @@ RUN rustup target add aarch64-unknown-linux-musl
 WORKDIR /usr/src/app
 
 # Copy dependency files first for better layer caching
-COPY Cargo.toml Cargo.lock* ./
+COPY rust/Cargo.toml rust/Cargo.lock* ./
 
 # Create a dummy main.rs to build dependencies
 RUN mkdir src && echo "fn main() {}" > src/main.rs
@@ -30,7 +30,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
     cargo build --release --target $TARGET && rm -rf src
 
 # Copy source code
-COPY src ./src
+COPY rust/src ./src
 
 # Build the application for the target architecture
 ARG TARGETPLATFORM
