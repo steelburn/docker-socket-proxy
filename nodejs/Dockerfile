@@ -2,9 +2,9 @@ FROM node:latest
 
 WORKDIR /app
 
-COPY package.json ./
+COPY nodejs/package.json ./
 RUN npm install
 
-COPY src/ ./
+COPY nodejs/src/ ./
 
 CMD ["node", "src/index.js"]
