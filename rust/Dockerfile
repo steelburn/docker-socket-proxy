@@ -48,11 +48,12 @@ FROM alpine:latest AS binary-selector
 
 ARG TARGETPLATFORM
 COPY --from=builder /usr/src/app/target/x86_64-unknown-linux-musl/release/docker_socket_proxy /amd64/
+COPY --from=builder /usr/src/app/target/aarch64-unknown-linux-musl/release/docker_socket_proxy /arm64/
 
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
     cp /amd64/docker_socket_proxy /docker_socket_proxy; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-    echo "Arm64 binary not built for single-platform build"; exit 1; \
+    cp /arm64/docker_socket_proxy /docker_socket_proxy; \
     fi
 
 # Runtime stage - using scratch for minimal image
