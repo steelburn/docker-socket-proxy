@@ -8,7 +8,7 @@ use log::{info, warn, error, debug};
 async fn proxy(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     let socket_path = "/var/run/docker.sock";
     let method = req.method().as_str();
-    let uri = req.uri();
+    let path = req.uri().path();
 
     // Determine client IP (prefer X-Forwarded-For if present)
     let client_ip = req.headers().get("x-forwarded-for")
@@ -17,7 +17,7 @@ async fn proxy(req: HttpRequest, body: web::Bytes) -> HttpResponse {
         .map(|s| s.trim().to_string())
         .unwrap_or_else(|| req.peer_addr().map(|a| a.ip().to_string()).unwrap_or_else(|| "unknown".to_string()));
 
-    info!("INFO: Proxying request: {} {} from {}", method, uri, client_ip);
+    info!("INFO: Proxying request: {} {} from {}", method, path, client_ip);
 
     // Connect to Docker Unix socket
     let mut stream = match UnixStream::connect(socket_path).await {
@@ -48,7 +48,7 @@ async fn proxy(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     // Add API key if configured
     if let Ok(api_key) = env::var("API_KEY") {
         http_request.push_str(&format!("x-api-key: {}\r\n", api_key));
-        info!("Added API key authentication header");
+        info!("INFO: Added API key authentication header");
     }
 
     // Add Host header for Docker API
@@ -159,18 +159,11 @@ async fn main() -> io::Result<()> {
     let app_version = env!("CARGO_PKG_VERSION");
     let port = env::var("PORT").unwrap_or_else(|_| "3277".to_string());
 
-    println!("🚀 Starting {} v{}", app_name, app_version);
-    println!("📡 Binding to 0.0.0.0:{}", port);
-    info!("🚀 Starting {} v{}", app_name, app_version);
-    info!("📡 Binding to 0.0.0.0:{}", port);
+    println!("🚀 Starting Docker Socket Proxy on 0.0.0.0:{}", port);
+    info!("🚀 Starting Docker Socket Proxy on 0.0.0.0:{}", port);
 
     let server = HttpServer::new(|| App::new().default_service(web::route().to(proxy)))
         .bind(format!("0.0.0.0:{}", port))?;
-
-    println!("✅ {} v{} is ready and listening on port {}", app_name, app_version, port);
-    println!("🔗 Docker socket proxy ready to accept connections");
-    info!("✅ {} v{} is ready and listening on port {}", app_name, app_version, port);
-    info!("🔗 Docker socket proxy ready to accept connections");
 
     server.run().await
 }
