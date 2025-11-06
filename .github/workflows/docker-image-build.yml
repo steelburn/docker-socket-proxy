@@ -79,6 +79,9 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
+      with:
+        driver-opts: |
+          privileged=true
 
     - name: Set additional tags
       id: tags
