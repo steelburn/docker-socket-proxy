@@ -95,6 +95,7 @@ jobs:
         context: ./
         file: ./${{ matrix.lang }}/Dockerfile
         push: true
+        privileged: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
         tags: |
