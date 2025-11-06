@@ -86,11 +86,24 @@ func main() {
 		req.URL.Host = targetURL.Host
 	}
 
-	// 4. Start the server.
+	// 4. Create a mux for routing
+	mux := http.NewServeMux()
+
+	// Health check endpoint
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status": "healthy"}`))
+	})
+
+	// Default handler: proxy to Docker
+	mux.Handle("/", proxy)
+
+	// 5. Start the server.
 	log.Printf("🚀 Starting Docker Socket Proxy on 0.0.0.0%s", listenAddr)
 
 	// Listen and serve
-	err := http.ListenAndServe(listenAddr, proxy)
+	err := http.ListenAndServe(listenAddr, mux)
 	if err != nil {
 		log.Fatalf("FATAL: Server failed: %v", err)
 	}

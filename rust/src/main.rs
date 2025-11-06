@@ -4,6 +4,11 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use std::env;
 use std::io;
 use log::{info, warn, error, debug};
+use serde_json;
+
+async fn health() -> HttpResponse {
+    HttpResponse::Ok().json(serde_json::json!({"status": "healthy"}))
+}
 
 async fn proxy(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     let socket_path = "/var/run/docker.sock";
@@ -162,7 +167,7 @@ async fn main() -> io::Result<()> {
     println!("🚀 Starting Docker Socket Proxy on 0.0.0.0:{}", port);
     info!("🚀 Starting Docker Socket Proxy on 0.0.0.0:{}", port);
 
-    let server = HttpServer::new(|| App::new().default_service(web::route().to(proxy)))
+    let server = HttpServer::new(|| App::new().route("/health", web::get().to(health)).default_service(web::route().to(proxy)))
         .bind(format!("0.0.0.0:{}", port))?;
 
     server.run().await

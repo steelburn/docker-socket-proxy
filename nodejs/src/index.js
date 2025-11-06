@@ -28,6 +28,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy' });
+});
+
 // Proxy requests to the Docker socket
 app.all('/*', (req, res) => {
   proxy.web(req, res, (err) => {
