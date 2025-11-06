@@ -7,7 +7,7 @@ on:
 jobs:
   detect:
     name: Detect changed language directories
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       go: ${{ steps.changes.outputs.go }}
       rust: ${{ steps.changes.outputs.rust }}
@@ -33,7 +33,7 @@ jobs:
   lint-go:
     needs: detect
     if: needs.detect.outputs.go == 'true'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
     - uses: golangci/golangci-lint-action@v3
@@ -43,7 +43,7 @@ jobs:
   lint-rust:
     needs: detect
     if: needs.detect.outputs.rust == 'true'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
     - uses: dtolnay/rust-toolchain@stable
@@ -52,7 +52,7 @@ jobs:
   lint-nodejs:
     needs: detect
     if: needs.detect.outputs.nodejs == 'true'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
