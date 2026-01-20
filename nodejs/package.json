@@ -13,7 +13,7 @@
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
-    "eslint": "^8.57.0"
+    "eslint": "^9.39.1"
   },
   "repository": {
     "type": "git",
