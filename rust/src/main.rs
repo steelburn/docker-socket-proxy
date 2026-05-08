@@ -14,6 +14,8 @@ async fn proxy(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     let socket_path = "/var/run/docker.sock";
     let method = req.method().as_str();
     let path = req.uri().path();
+    let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
+    let uri = format!("{}{}", path, query);
 
     // Determine client IP (prefer X-Forwarded-For if present)
     let client_ip = req.headers().get("x-forwarded-for")
